@@ -1,5 +1,6 @@
 import express, {Router} from "express"
 
+// Controllers
 import {updateUser, getUser} from "./user.controller.js"
 
 const userRouter: Router = express.Router()
