@@ -1,20 +1,50 @@
-import mongoose from "mongoose"
+import mongoose, {Schema, Document, Model} from "mongoose"
 
-const {Schema} = mongoose
+export interface TUser extends Document {
+    name: string
+    clerkId: string
+    email: string
+    totalDinners: number
+    dinnersThisWeek: number
+    avatarUrl: string
+}
 
-const userSchema = new Schema(
+const userSchema = new Schema<TUser>(
     {
-        clerkId: {type: String, required: true, unique: true},
-        name: {type: String, required: true},
-        email: {type: String, required: true, unique: true},
-
+        clerkId: {
+            type: String,
+            required: true,
+            unique: true
+        },
+        name: {
+            type: String,
+            required: true
+        },
+        email: {
+            type: String,
+            required: true,
+            unique: true
+        },
         // Activity metrics
-        totalDinners: {type: Number, required: true, default: 0},
-        dinnersThisWeek: {type: Number, required: true, default: 0},
-
-        avatarUrl: {type: String, default: ""}
+        totalDinners: {
+            type: Number,
+            required: true,
+            default: 0
+        },
+        dinnersThisWeek: {
+            type: Number,
+            required: true,
+            default: 0
+        },
+        avatarUrl: {
+            type: String,
+            default: ""
+        }
     },
-    {timestamps: true}
+    {
+        timestamps: true,
+        collection: "user"
+    }
 )
 
-export const userModel = mongoose.models.User || mongoose.model("User", userSchema, "user")
+export const userModel: Model<TUser> = mongoose.models.User || mongoose.model<TUser>("User", userSchema)

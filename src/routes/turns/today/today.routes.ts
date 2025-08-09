@@ -6,12 +6,12 @@ import {createDinner, getDinner, updateDinner} from "./today.controller.js"
 const todayRouter: Router = express.Router()
 
 // POST create todar dinner
-todayRouter.get("/", createDinner)
+todayRouter.post("/", createDinner)
 
 // GET get today dinner
 todayRouter.get("/", getDinner)
 
 // PATCH update today dinner
-todayRouter.get("/", updateDinner)
+todayRouter.patch("/", updateDinner)
 
 export default todayRouter
