@@ -1,5 +1,7 @@
 import type {Request, Response} from "express"
 
+import connectToMongoDB from "../../../db/DBConnection.js"
+
 // DB Entities
 import {dinnerTurnModel} from "../../../db/models/DinnerTurn.js"
 import {userModel} from "../../../db/models/User.js"
@@ -11,6 +13,8 @@ import {isWithinCDMXWeek, isCDMXMonday} from "../../../utils/TimeManagers.js"
 // Create dinner for today
 export const createDinner = async (req: Request, res: Response) => {
     try {
+        await connectToMongoDB()
+
         const {cookId, registeredBy, dish} = req.body
 
         if (!cookId || !registeredBy || !dish) {
@@ -74,6 +78,8 @@ export const updateDinner = async (req: Request, res: Response) => {
 // Get dinner from yesterday Ready
 export const getYesterdayDinner = async (req: Request, res: Response) => {
     try {
+        await connectToMongoDB()
+
         const timeZone = "America/Mexico_City"
         const yesterday = DateTime.now().setZone(timeZone).minus({days: 1})
         const yesterdayStart = yesterday.startOf("day").toJSDate()
@@ -107,6 +113,8 @@ export const getYesterdayDinner = async (req: Request, res: Response) => {
 // Post create a yesterdar dinner
 export const createYesterdayDinner = async (req: Request, res: Response) => {
     try {
+        await connectToMongoDB()
+
         const {cookId, registeredBy, dish} = req.body
 
         if (!cookId || !registeredBy || !dish) {

@@ -2,9 +2,13 @@ import type {Request, Response} from "express"
 
 import {userModel} from "../../db/models/User.js"
 
+import connectToMongoDB from "../../db/DBConnection.js"
+
 // Get User Info
 export const getUser = async (req: Request, res: Response) => {
     try {
+        await connectToMongoDB()
+
         const clerkId = req.body
 
         console.log("endpoint usado")

@@ -1,10 +1,14 @@
 import type {Request, Response} from "express"
 
+import connectToMongoDB from "../../db/DBConnection.js"
+
 import {userModel} from "../../db/models/User.js"
 
 // Get User Info
 export const getUsersInfo = async (req: Request, res: Response) => {
     try {
+        await connectToMongoDB()
+
         const users = await userModel.find({})
 
         if (users.length === 0) {
