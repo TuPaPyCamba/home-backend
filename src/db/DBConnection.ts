@@ -8,7 +8,7 @@ const connectToMongoDB = async () => {
 
     try {
         await mongoose.connect(MONGO_URL as string, {
-            dbName: "HomeDB" // opcional pero recomendado
+            dbName: "home_dinner_db" // opcional pero recomendado
         })
 
         isConnected = true
