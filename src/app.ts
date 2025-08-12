@@ -21,7 +21,7 @@ app.use(express.json())
 app.use(cookieParser())
 app.use(
     cors({
-        origin: "https://homedinner-app-git-dev-cambaproyects.vercel.app",
+        origin: "https://homedinner-app.vercel.app",
         methods: ["GET", "POST", "PUT", "PATCH"],
         credentials: true
     })
