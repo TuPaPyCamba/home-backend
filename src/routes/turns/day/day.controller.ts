@@ -122,17 +122,32 @@ export const createYesterdayDinner = async (req: Request, res: Response) => {
             return
         }
 
-        console.log("jalando")
-
         const timeZone = "America/Mexico_City"
         const yesterday8pm = DateTime.now().setZone(timeZone).minus({days: 1}).set({hour: 20, minute: 0, second: 0})
         const cookedAt = yesterday8pm.toJSDate()
 
+        const cookedBy = await userModel.findById(cookId)
+        const registerBy = await userModel.findById(registeredBy)
+
+        if (!cookedBy || !registerBy) {
+            res.status(404).json({error: true, message: "Usuario no encontrado."})
+            return
+        }
+
         const nuevaCena = await dinnerTurnModel.create({
             cookedAt,
-            cookId,
+            cookId: cookedBy._id,
             dish,
-            registeredBy
+            registeredBy: registerBy._id
+        })
+
+        const isWeekly = isWithinCDMXWeek(cookedAt)
+
+        await userModel.findByIdAndUpdate(cookId, {
+            $inc: {
+                totalDinners: 1,
+                ...(isWeekly && {dinnersThisWeek: 1})
+            }
         })
 
         res.status(201).json({error: false, message: "Dinner successfully registered.", data: nuevaCena})
