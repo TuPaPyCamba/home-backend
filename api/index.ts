@@ -1,4 +1,6 @@
 import app from "../src/app.js"
+import type {VercelRequest, VercelResponse} from "@vercel/node"
 
-// To Production "VERCEL"
-export default app
+export default (req: VercelRequest, res: VercelResponse) => {
+    app(req, res) // Express maneja la request como middleware
+}
