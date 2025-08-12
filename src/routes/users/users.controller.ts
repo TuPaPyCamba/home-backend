@@ -9,7 +9,7 @@ export const getUsersInfo = async (req: Request, res: Response) => {
     try {
         await connectToMongoDB()
 
-        const users = await userModel.find({})
+        const users = await userModel.find()
 
         if (users.length === 0) {
             res.status(404).json({message: "No users found"})
