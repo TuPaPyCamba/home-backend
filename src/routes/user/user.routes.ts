@@ -5,7 +5,7 @@ import {updateUser, getUser} from "./user.controller.js"
 
 const userRouter: Router = express.Router()
 
-// UpdateUserByClerkId
+// Update User by clerkId
 userRouter.patch("/", updateUser)
 
 // GetUserByClerkId

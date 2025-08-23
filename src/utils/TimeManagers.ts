@@ -26,3 +26,9 @@ export const isCDMXMonday = (): boolean => {
     const now = DateTime.now().setZone("America/Mexico_City")
     return now.weekday === 1
 }
+
+export const getStartOfCDMXWeek = (): Date => {
+    const now = DateTime.now().setZone("America/Mexico_City")
+    const monday = now.startOf("week") // Luxon considera lunes como inicio
+    return monday.toJSDate()
+}
