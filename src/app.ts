@@ -21,7 +21,7 @@ app.use(express.json())
 app.use(cookieParser())
 app.use(
     cors({
-        origin: "https://homedinner-app.vercel.app",
+        origin: "*",
         methods: ["GET", "POST", "PUT", "PATCH"],
         credentials: true
     })
