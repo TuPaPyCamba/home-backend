@@ -32,3 +32,14 @@ export const getStartOfCDMXWeek = (): Date => {
     const monday = now.startOf("week") // Luxon considera lunes como inicio
     return monday.toJSDate()
 }
+
+export const isThisWeek = (date: Date) => {
+    const dtCDMX = DateTime.now().setZone("America/Mexico_City")
+
+    const startOfWeek = dtCDMX.startOf("week").startOf("day")
+    const endOfWeek = startOfWeek.plus({days: 6}).endOf("day")
+
+    const dtDate = DateTime.fromJSDate(date).setZone("America/Mexico_City")
+
+    return dtDate >= startOfWeek && dtDate <= endOfWeek
+}

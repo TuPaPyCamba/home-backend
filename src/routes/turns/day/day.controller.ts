@@ -9,8 +9,8 @@ import {dinnerTurnModel} from "../../../db/models/DinnerTurn.js"
 import {userModel} from "../../../db/models/User.js"
 
 // Time Mannagers
+import {isWithinCDMXWeek, isCDMXMonday, isThisWeek} from "../../../utils/TimeManagers.js"
 import {DateTime} from "luxon"
-import {isWithinCDMXWeek, isCDMXMonday} from "../../../utils/TimeManagers.js"
 
 // Create dinner for today
 export const createDinner = async (req: Request, res: Response) => {
@@ -97,8 +97,45 @@ export const getDinner = async (req: Request, res: Response) => {
 
 // Update dinner info for today
 export const updateDinner = async (req: Request, res: Response) => {
-    res.status(201).json({})
-    return
+    try {
+        await connectToMongoDB()
+
+        const {id, dish, cookId} = await req.body
+
+        if (!id || !dish || !cookId) {
+            res.status(400).json({error: "Faltan campos obligatorios"})
+            return
+        }
+
+        const oldTurn = await dinnerTurnModel.findById(id)
+        if (!oldTurn) {
+            res.status(404).json({error: "Turno no encontrado"})
+            return
+        }
+
+        const isWeekly = isThisWeek(new Date(oldTurn.cookedAt))
+
+        if (oldTurn.cookId.toString() !== cookId) {
+            await userModel.findByIdAndUpdate(oldTurn.cookId, {
+                $inc: {
+                    totalDinners: -1,
+                    ...(isWeekly && {dinnersThisWeek: -1})
+                }
+            })
+
+            await userModel.findByIdAndUpdate(cookId, {
+                $inc: {
+                    totalDinners: 1,
+                    ...(isWeekly && {dinnersThisWeek: 1})
+                }
+            })
+        }
+
+        const updated = await dinnerTurnModel.findByIdAndUpdate(id, {dish, cookId}, {new: true}).populate("cookId", "name")
+
+        res.status(200).json({message: "Turno actualizado", dish: updated})
+        return
+    } catch (error) {}
 }
 
 // Get dinner from yesterday Ready
