@@ -1,8 +1,10 @@
 import type {Request, Response} from "express"
 
+// Data base Tools
 import connectToMongoDB from "../../../db/DBConnection.js"
+import mongoose from "mongoose"
 
-// DB Entities
+// Data base models
 import {dinnerTurnModel} from "../../../db/models/DinnerTurn.js"
 import {userModel} from "../../../db/models/User.js"
 
@@ -65,8 +67,32 @@ export const createDinner = async (req: Request, res: Response) => {
 
 // Get dinner info for today
 export const getDinner = async (req: Request, res: Response) => {
-    res.status(201).json({})
-    return
+    try {
+        await connectToMongoDB()
+
+        const nowCDMX = DateTime.now().setZone("America/Mexico_City")
+        const startCDMX = nowCDMX.startOf("day").toJSDate()
+        const endCDMX = nowCDMX.endOf("day").toJSDate()
+
+        mongoose.model("User", userModel.schema)
+
+        const dinnerToday = await dinnerTurnModel
+            .findOne({cookedAt: {$gte: startCDMX, $lte: endCDMX}})
+            .populate({path: "cookId", model: "User", select: "name avatarUrl"})
+            .populate({path: "registeredBy", model: "User", select: "name"})
+
+        if (!dinnerToday) {
+            res.status(200).json({alreadyRegistered: false})
+            return
+        }
+
+        res.status(200).json({message: "today's record", turn: dinnerToday, alreadyRegistered: true})
+        return
+    } catch (error) {
+        console.error("Error al verificar cena de hoy:", error)
+        res.status(500).json({error: "Error en el servidor"})
+        return
+    }
 }
 
 // Update dinner info for today
